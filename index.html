@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.io Chat</title>
+</head>
+<body>
+  <div id="login">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="text" id="loginUsername" placeholder="Username" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+  <div id="chat" style="display: none;">
+    <h2>Chat Room</h2>
+    <div id="roomList"></div>
+    <input id="roomInput" placeholder="Enter room name" /><button onclick="joinRoom()">Join/Create Room</button>
+    <div id="messages"></div>
+    <input id="messageInput" placeholder="Type a message" /><button onclick="sendMessage()">Send</button>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    const socket = io();
+
+    // Login form submission
+    $('#loginForm').submit((e) => {
+      e.preventDefault();
+      const username = $('#loginUsername').val();
+      const password = $('#loginPassword').val();
+      $.post('/login', { username, password }, (data) => {
+        if (data.token) {
+          socket.emit('login', data.token);
+          $('#login').hide();
+          $('#chat').show();
+        } else {
+          alert('Login failed. Please check your credentials.');
+        }
+      });
+    });
+
+    // Other client-side code remains the same as in the previous example
+  </script>
+</body>
+</html>
